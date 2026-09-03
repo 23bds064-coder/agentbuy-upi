@@ -1,0 +1,97 @@
+{
+  "balance": 0,
+  "conditions": [
+    {
+      "id": "cond-product-1",
+      "type": "product",
+      "title": "Price alert",
+      "product": "iPhone 17 Pro",
+      "targetPrice": 90000,
+      "enabled": true,
+      "createdAt": "2026-08-30T08:10:00.000Z",
+      "frequency": "instant"
+    },
+    {
+      "id": "cond-local-1",
+      "type": "local",
+      "title": "Nearby stock alert",
+      "product": "iPhone 17 Pro",
+      "store": "Trusted Store",
+      "distanceKm": 2,
+      "stockAvailable": true,
+      "enabled": true,
+      "createdAt": "2026-08-30T09:05:00.000Z",
+      "frequency": "daily"
+    }
+  ],
+  "notifications": [
+    {
+      "id": "ntf-1",
+      "title": "Price condition met",
+      "product": "iPhone 17 Pro",
+      "price": "₹89,999",
+      "target": "Target: ₹90,000",
+      "type": "product",
+      "createdAt": "2026-08-30T10:30:00.000Z",
+      "conditionId": "cond-product-1"
+    },
+    {
+      "id": "ntf-2",
+      "title": "Nearby deal available",
+      "product": "Trusted Store",
+      "price": "1.8 km away",
+      "target": "iPhone 17 Pro in stock",
+      "location": "2 km radius",
+      "type": "local",
+      "createdAt": "2026-08-30T10:40:00.000Z",
+      "conditionId": "cond-local-1"
+    }
+  ],
+  "payments": [
+    {
+      "id": "pay-1788175366864",
+      "merchant": "AgentBuy Merchant",
+      "amount": 27399,
+      "status": "Successful",
+      "date": "2026-08-31T11:22:46.864Z",
+      "method": "Other",
+      "item": "AirPods Pro + Laptop Stand"
+    },
+    {
+      "id": "pay-1788174711490",
+      "merchant": "AgentBuy Merchant",
+      "amount": 27399,
+      "status": "Successful",
+      "date": "2026-08-31T11:11:51.490Z",
+      "method": "Other",
+      "item": "AirPods Pro + Laptop Stand"
+    },
+    {
+      "id": "pay-1",
+      "merchant": "Apple Store",
+      "amount": 89999,
+      "status": "Successful",
+      "date": "2026-08-30T10:42:00.000Z",
+      "method": "UPI",
+      "item": "iPhone 17 Pro"
+    },
+    {
+      "id": "pay-2",
+      "merchant": "Paytm Merchant",
+      "amount": 1250,
+      "status": "Pending",
+      "date": "2026-08-29T20:10:00.000Z",
+      "method": "UPI",
+      "item": "Phone case"
+    },
+    {
+      "id": "pay-3",
+      "merchant": "Local Market",
+      "amount": 2540,
+      "status": "Failed",
+      "date": "2026-08-28T12:30:00.000Z",
+      "method": "Other",
+      "item": "Earbuds"
+    }
+  ]
+}
