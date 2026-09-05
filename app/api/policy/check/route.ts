@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { checkPolicy, type Product } from "@/app/lib/agentbuy";
+import { aiCatalogService, checkPolicy, type Product } from "@/app/lib/agentbuy";
 
 export async function POST(request: Request) {
   try {
@@ -10,12 +10,14 @@ export async function POST(request: Request) {
       upsell?: Product;
     };
 
-    const selectedProduct = body.selectedProduct ?? body.items?.[0];
-    const upsell = body.upsell ?? body.items?.[1];
-    const total = Number(body.total ?? (selectedProduct && upsell ? selectedProduct.price + upsell.price : 0));
+    const selectedInput = body.selectedProduct ?? body.items?.[0];
+    const upsellInput = body.upsell !== undefined ? body.upsell : (body.items && body.items.length > 1 ? body.items[1] : null);
+    const selectedProduct = selectedInput ? aiCatalogService.getById(selectedInput.id) : undefined;
+    const upsell = upsellInput ? aiCatalogService.getById(upsellInput.id) : null;
+    const total = (selectedProduct?.price ?? 0) + (upsell?.price ?? 0);
 
-    if (!selectedProduct || !upsell) {
-      return NextResponse.json({ ok: false, message: "Cart does not contain the required items for policy validation." }, { status: 400 });
+    if (!selectedProduct) {
+      return NextResponse.json({ ok: false, message: "Cart does not contain a primary product for policy validation." }, { status: 400 });
     }
 
     const policyResult = checkPolicy(total, selectedProduct, upsell);

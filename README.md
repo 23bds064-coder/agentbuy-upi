@@ -1,70 +1,115 @@
-# AgentBuy Commerce Agent
+# AgentBuy
 
-AgentBuy is a merchant-facing AI commerce demo that turns a buyer request into a structured recommendation flow with policy enforcement, human approval, and a simulated payment checkout.
+### AI-native commerce agent for merchants
 
-## What this project proves
+AgentBuy turns natural-language shopping intent into a bounded commerce workflow. It searches a verified merchant catalog, recommends a product, generates a contextual upsell, calculates the cart on the backend, checks deterministic policies, waits for explicit human approval, and records the result in an audit trail.
 
-- A buyer request can be turned into a product recommendation
-- The recommendation is explainable and auditable
-- Commerce guardrails prevent unsafe or oversized orders
-- Payment is gated behind approval instead of automatic capture
-- Merchant value is visible via upsell lift and revenue impact
+## Demo
 
-## Features
+Use this five-minute flow:
 
-- AI buyer prompt and product discovery
-- Budget-aware recommendation matching
-- Contextual upsell selection
-- Policy engine with max order and blocker checks
-- Human approval before payment
-- Razorpay test-mode simulation
-- Audit trail for merchant review
+1. Enter `I need noise cancelling headphones under ₹25,000 for travel.`
+2. Show the catalog-backed recommendation and concise explanation.
+3. Show the contextual upsell, cart total, policy checks, and calculated uplift.
+4. Approve the transaction and complete the Razorpay test-mode checkout.
+5. Show payment verification, order creation, the audit trail, and merchant dashboard.
+6. Run the blocked transaction demo and show that the ₹42,000 cart is rejected against the ₹30,000 limit.
 
-## Quick start
+## Key Features
+
+- AI buyer intent and product discovery
+- AI-readable merchant catalog with structured prices, stock, attributes, and schema
+- Catalog-backed product recommendation
+- Contextual AI upselling and cart uplift calculation
+- Deterministic order and payment policies
+- Explicit human approval before the guarded payment flow
+- Razorpay test-mode payment simulation and signature verification
+- Transaction audit trail with policy and payment events
+- Merchant dashboard with order, uplift, and blocked-transaction metrics
+- Failure handling for policy blocks, invalid approvals, payment failures, and cancellations
+
+## Architecture
+
+```text
+User
+  -> AI Agent
+  -> Merchant Catalog
+  -> Recommendation
+  -> Upsell
+  -> Backend Cart Calculation
+  -> Policy Engine
+  -> Human Approval
+  -> Razorpay Test Mode
+  -> Order
+  -> Audit Trail
+```
+
+The AI recommends and explains. The backend owns catalog prices, cart totals, policy decisions, approvals, payment creation, and order finalization.
+
+## Safety Controls
+
+- Maximum order value: ₹30,000
+- Maximum upsell value: ₹5,000
+- Human approval required before the guarded payment flow
+- Razorpay test mode only; no real money is charged
+- Payment credentials are not stored in application data
+- No chain-of-thought is exposed; explanations cite observable catalog and policy facts
+- Blocked transactions create no payment order and no order record
+
+## Running Locally
+
+Requirements: Node.js 20 or later.
 
 ```bash
 npm install
+Copy-Item .env.example .env.local
 npm run dev
 ```
 
-Open http://localhost:3000
+Open [http://localhost:3000](http://localhost:3000). If port 3000 is occupied, Next.js will select another available port.
 
-If port 3000 is occupied, Next.js will choose the next available port automatically.
+The test-mode defaults work without credentials. To override them, set the optional variables in `.env.local`:
 
-## Demo flow for a 5-minute video
+```text
+RAZORPAY_KEY_ID=rzp_test_your_key_id
+RAZORPAY_KEY_SECRET=your_test_secret
+```
 
-1. Open the app and enter a buyer request such as:
-   "Noise cancelling headphones under ₹25,000 for travel"
-2. Click Find Product.
-3. Show the reasoning panel and recommended product.
-4. Highlight the audit trail and policy checks.
-5. Trigger the failure case to show the policy block.
-6. Return to a valid case and click Approve & Pay.
-7. Show the payment confirmation and explain that this is a bounded commerce flow, not an unguarded AI action.
+Never use production Razorpay credentials for this demo.
 
-## Strongest company-message angle
+## Testing
 
-This is not just a chatbot. It is a bounded AI commerce workflow:
+Run the full regression suite:
 
-- buyer input → structured product match
-- catalog search → product and upsell selection
-- policy engine → merchant-safe approvals
-- human approval → controlled payment path
-- audit trail → explainable decision record
+```bash
+npm test
+```
 
-## Verification
-
-Run these before submitting or demoing:
+Run static and production checks:
 
 ```bash
 npm run lint
 npm run build
 ```
 
-Both should pass before recording the final proof video.
+The tests cover successful approval and payment flows, signature verification, replay prevention, policy blocks, audit events, deterministic ₹42,000 blocked-cart behavior, and direct payment/order bypass attempts.
 
-## Repo story for interviews or submission
+## Project Structure
 
-"The hardest problem was not building the UI, it was making the AI behave like a merchant-safe decision engine instead of a generic chatbot. The solution adds explicit guardrails, an approval gate, and a transparent audit trail so the system is explainable and safe for commerce."
+```text
+app/
+  api/                 Backend catalog, agent, policy, approval, payment, order, and audit routes
+  lib/                 Catalog, cart, policy, approval, Razorpay, audit, and storage logic
+  page.tsx             Main buyer and merchant demo experience
+data/                   Local demo state and audit records
+tests/                  Node-based route and domain regression tests
+```
 
-This is the narrative that makes the project feel company-grade instead of demo-only.
+## Interview Summary
+
+AgentBuy demonstrates a bounded AI commerce workflow rather than an unguarded chatbot:
+
+```text
+buyer intent -> verified catalog -> recommendation -> upsell -> policy decision
+-> explicit approval -> test payment -> order -> explainable audit record
+```

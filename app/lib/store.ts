@@ -1,5 +1,3 @@
-import "server-only";
-
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 import path from "path";
 import { seedData, type AppData } from "@/app/lib/agentbuy";

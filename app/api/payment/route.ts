@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createPaymentRecord, saveAppData } from "@/app/lib/agentbuy";
+import { createPaymentRecord, policy, saveAppData } from "@/app/lib/agentbuy";
 import { readAppDataFromDisk, writeAppDataToDisk } from "@/app/lib/store";
 
 export async function POST(request: Request) {
@@ -13,6 +13,29 @@ export async function POST(request: Request) {
     const item = body.item ?? "iPhone 17 Pro";
     const amount = Number(body.amount ?? 89999);
     const method = body.method ?? "UPI";
+
+    if (amount > policy.maxOrderValue) {
+      const { recordAuditEvent } = await import("@/app/lib/audit");
+      recordAuditEvent({
+        eventType: "POLICY_BLOCKED",
+        amount,
+        status: "BLOCKED",
+        summary: "Policy blocked",
+        explanation: `Payment blocked because ₹${amount.toLocaleString("en-IN")} exceeds the ₹${policy.maxOrderValue.toLocaleString("en-IN")} transaction limit.`,
+        policyResult: {
+          passed: false,
+          violations: [`Order total ₹${amount.toLocaleString("en-IN")} exceeds the ₹${policy.maxOrderValue.toLocaleString("en-IN")} policy cap.`],
+        },
+      });
+      return NextResponse.json(
+        {
+          ok: false,
+          error: "POLICY_BLOCKED",
+          message: `Payment blocked: maximum allowed is ₹${policy.maxOrderValue.toLocaleString("en-IN")}.`,
+        },
+        { status: 403 }
+      );
+    }
 
     const state = readAppDataFromDisk();
     const payment = createPaymentRecord(item, amount, method);

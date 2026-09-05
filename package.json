@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "node tests/approval-razorpay.test.mjs && node tests/audit-trail.test.mjs && node tests/blocked-transaction.test.mjs"
   },
   "dependencies": {
     "lucide-react": "^1.37.0",
